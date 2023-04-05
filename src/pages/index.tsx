@@ -1,10 +1,6 @@
 import * as React from 'react';
 
 import Layout from '@/components/layout/Layout';
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
 import Seo from '@/components/Seo';
 
 /**
@@ -14,24 +10,41 @@ import Seo from '@/components/Seo';
  * You can override the next-env if the type is important to you
  * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
  */
-import Vercel from '~/svg/Vercel.svg';
 
 // !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
 
 export default function HomePage() {
-
   const [alltables, setAlltables] = React.useState([]);
 
   React.useEffect(() => {
     fetch('https://apianimalshelters.lacontroller.io/alltables')
       .then((response) => response.json())
-      .then((data) => setAlltables(data));
+      .then((data) =>
+        setAlltables(
+          data.map((eachTable) => {
+            return {
+              ...eachTable,
+              data: eachTable.data.filter((x) => {
+                if (x.amount) {
+                  return true;
+                } else {
+                  if (x.amount === null) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                }
+              }),
+            };
+          })
+        )
+      );
   }, []);
 
   React.useEffect(() => {
-    console.log(alltables);
+    //console.log(alltables);
   }, [alltables]);
 
   return (
@@ -39,9 +52,7 @@ export default function HomePage() {
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
-      <main>
-        
-      </main>
+      <main></main>
     </Layout>
   );
 }
